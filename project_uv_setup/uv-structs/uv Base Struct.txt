@@ -1,0 +1,68 @@
+# ۱. ساخت دایرکتوری پروژه و ورود به آن
+mkdir my_project
+cd my_project
+
+# ۲. راه‌اندازی پروژه مبتنی بر پایتون 3.12 (فرمت استاندارد application/package)
+uv init --python 3.12 --app
+
+نکته فنی: سوئیچ --app ساختار مدرن مبتنی بر pyproject.toml ایجاد می‌کند و فایل پیش‌فرض main.py را قرار می‌دهد. uv به طور خودکار فایل .python-version را برابر با 3.12 قرار می‌دهد.
+
+# ایجاد venv اختصاصی با پایتون 3.12
+uv venv --python 3.12
+
+# فعال‌سازی محیط مجازی
+# در لینوکس / مک:
+source .venv/bin/activate
+
+# در ویندوز (PowerShell):
+# .venv\Scripts\Activate.ps1(optional)
+
+# ۱. افزودن وابستگی‌های اصلی پروژه
+uv add fastapi pydantic uvicorn[standard] httpx
+#"fastapi[standard]"
+
+# ۲. افزودن وابستگی‌های توسعه و تست (Dev Dependencies)
+uv add --dev pytest ruff mypy
+
+# ۳. سینک و تضمین ایجاد دقیق uv.lock و اعمال به .venv
+uv sync
+
+
+پس از اجرای این دستورات، فایل فوق‌العاده حیاتی uv.lock ساخته می‌شود که مشخصات دقیق تمامی پکیج‌ها و ساب‌دپندسی‌ها همراه با هش‌های امنیتی آنها را نگه می‌دارد.
+
+# ۱. فرمت کردن و مرتب‌سازی خودکار فاصله‌ها، ایندنت‌ها و ایمپورت‌ها
+uv run ruff format .
+
+# ۲. بررسی کدهای نامناسب، ایمپورت‌های اضافه و باگ‌های بالقوه (با قابلیت فیکس خودکار)
+uv run ruff check . --fix
+
+# ۳. بررسی دقیق تایپ‌ها (Static Typing) برای مطمئن شدن از نبود خطای داده‌ای
+uv run mypy .
+
+# ۴. اجرای تست‌ها برای اطمینان از درست کار کردن اندپوینت‌ها
+uv run pytest
+===================================================================================================
+ویندوز به صورت پیش‌فرض برای امنیت، اجرای اسکریپت‌ها را مسدود می‌کند. برای اینکه اجازه اجرای فایل را بدهید، فقط یک‌بار این دستور را در پاورشل بزنید و Enter کنید:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+
+====================================================================================================
+🚀 اسکریپت تک‌خطی (Quick-Start Script) برای پروژه‌های بعدی
+هر زمان خواستی پروژه جدیدی را در کمتر از ۱۰ ثانیه آماده کنی، کافی است این بلاک شل‌اسکریپت را کپی و در ترمینال اجرا کنی:
+-------------------------------------------------------------------------------------------------------------
+
+#!/usr/bin/env bash
+PROJECT_NAME="my_app"
+
+mkdir -p "$PROJECT_NAME" && cd "$PROJECT_NAME"
+uv init --python 3.12 --app
+uv venv --python 3.12
+uv add fastapi pydantic uvicorn[standard] httpx
+uv add --dev ruff pytest mypy
+mkdir -p src/app/{api,core,services,schemas,models} tests
+touch src/app/__init__.py
+uv sync
+
+echo "Template created successfully with uv.lock and Python 3.12!"
+--------------------------------------------------------------------------------------------------------------
+

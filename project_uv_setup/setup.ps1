@@ -1,0 +1,30 @@
+$PROJECT_NAME = "my_app"
+
+# ساخت پوشه پروژه و ورود به آن
+New-Item -ItemType Directory -Force -Path $PROJECT_NAME
+Set-Location $PROJECT_NAME
+
+# راه‌اندازی پروژه با uv
+uv init --python 3.12 --app
+uv add fastapi pydantic "uvicorn[standard]" httpx
+uv add --dev ruff pytest mypy
+
+# ساخت پوشه‌های معماری
+$dirs = @(
+    "src/app/api",
+    "src/app/core",
+    "src/app/services",
+    "src/app/schemas",
+    "src/app/models",
+    "tests"
+)
+foreach ($dir in $dirs) {
+    New-Item -ItemType Directory -Force -Path $dir | Out-Null
+}
+
+# ساخت فایل __init__.py
+New-Item -ItemType File -Force -Path "src/app/__init__.py" | Out-Null
+
+uv sync
+
+Write-Host "Template created successfully with uv.lock and Python 3.12!" -ForegroundColor Green
